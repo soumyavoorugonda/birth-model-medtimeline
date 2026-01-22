@@ -1,8 +1,34 @@
-import { Box, Typography, Chip } from "@mui/material";
+import { useMemo, useState } from "react";
+import { Box, Typography, Chip, Drawer, Divider} from "@mui/material";
 import TimelineBar from "./TimelineBar.jsx";
+
+function fmtDate(d) {
+  if (!d) return "ongoing";
+  // d can be string or Date
+  const date = typeof d === "string" ? new Date(d) : d;
+  if (Number.isNaN(date.getTime())) return String(d);
+  return date.toISOString().slice(0, 10);
+}
 
 function MedicationRow({timeline, timelineStart, timelineEnd, monthMarkers, todayX, todayDate, dayWidth = 3, gridTemplateColumns}) {
     const markers = monthMarkers;
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const hasSourceConflict = useMemo(() => {
+        if (!timeline?.records || timeline.records.length <= 1) return false;
+        const sources = new Set(timeline.records.map(r => r.source));
+        return sources.size > 1;
+    }, [timeline]);
+    const conflictReason = useMemo(() => {
+        if (!hasSourceConflict) return null;
+
+        const sources = Array.from(new Set(timeline.records.map(r => r.source)));
+        const doses = new Set(timeline.records.map(r => r.dose));
+        
+        if (doses.size > 1) {
+            return `Multiple sources (${sources.join(", ")}) with different doses.`;
+        }
+        return `Same medication documented by multiple sources: ${sources.join(", ")}`;
+    }, [timeline, hasSourceConflict]);
     return (
         <Box
         sx={{
@@ -16,12 +42,16 @@ function MedicationRow({timeline, timelineStart, timelineEnd, monthMarkers, toda
         {/* LEFT */}
         <Typography fontWeight={600}>
             {timeline.medication_name}
-            {timeline.records.length > 1 && (
-                <Chip 
-                    label={`${timeline.records.length} records`}
+            {hasSourceConflict && ( // Changed from timeline.records.length > 1
+                <Chip
+                    label="source conflict"
                     size="small"
                     color="warning"
-                    sx={{ ml: 1 }}
+                    clickable
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setDrawerOpen(true);
+                    }}
                 />
             )}
         </Typography>
@@ -61,7 +91,7 @@ function MedicationRow({timeline, timelineStart, timelineEnd, monthMarkers, toda
                 />
             </Box>
 
-            {/* Today line (topmost) */}
+            {/* Today line */}
             {Number.isFinite(todayX) && todayX >= 0 && (
                 <Box
                     sx={{
@@ -78,7 +108,7 @@ function MedicationRow({timeline, timelineStart, timelineEnd, monthMarkers, toda
             )}
         </Box>
 
-        {/* RIGHT (mirror) */}
+        {/* RIGHT */}
         <Box sx={{ pl: 2 }}>
             <Typography fontWeight={600}>
             {timeline.medication_name}
@@ -89,7 +119,90 @@ function MedicationRow({timeline, timelineStart, timelineEnd, monthMarkers, toda
         <Typography variant="body2" color="text.secondary">
             {timeline.displayDose}
         </Typography>
-        </Box>
+
+        {/* Drawer (details panel) */}
+        <Drawer
+            anchor="right"
+            open={drawerOpen}
+            onClose={() => setDrawerOpen(false)}
+        >
+            <Box sx={{ width: 420, p: 2 }}>
+            <Typography variant="h6">{timeline.medication_name}</Typography>
+
+            {conflictReason && (
+                <Typography variant="body2" sx={{ mt: 1 }} color="text.secondary">
+                {conflictReason}
+                </Typography>
+            )}
+
+            <Divider sx={{ my: 2 }} />
+
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                Records
+            </Typography>
+
+            <Box sx={{ 
+                display: "flex", 
+                flexDirection: "column", 
+                gap: 2 }}>
+                {Array.from(new Set(timeline.records.map(r => r.source))).map(source => {
+                    const sourceRecords = timeline.records
+                    .filter(r => r.source === source)
+                    .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+                    
+                    return (
+                    <Box 
+                        key={source} 
+                        sx={{
+                        p: 1.5, 
+                        bgcolor: "#f5f5f5", 
+                        borderRadius: 1 
+                        }}>
+
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
+                        {source} ({sourceRecords.length} record{sourceRecords.length > 1 ? 's' : ''})
+                        </Typography>
+                        
+                        {sourceRecords.map((r, idx) => (
+                        <Box
+                            key={r.id}
+                            sx={{
+                            p: 1.25,
+                            mb: idx < sourceRecords.length - 1 ? 1 : 0,
+                            border: "1px solid",
+                            borderColor: "divider",
+                            borderRadius: 1,
+                            bgcolor: "white",
+                            }}
+                        >
+                            <Typography variant="body2">
+                            {fmtDate(r.start_date)} → {fmtDate(r.end_date)}
+                            </Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                            Dose: {r.dose}
+                            </Typography>
+                            <Typography variant="body2">Route: {r.route}</Typography>
+                            {r.reason && (
+                            <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+                                {r.reason}
+                            </Typography>
+                            )}
+                        </Box>
+                        ))}
+                        
+                        {sourceRecords.length > 1 && (
+                        <Typography variant="caption" color="warning" sx={{ mt: 0.5, display: "block" }}>
+                            ↑ Dose change
+                        </Typography>
+                        )}
+                    </Box>
+                    );
+                })}
+                </Box>
+
+            </Box>
+        </Drawer>
+    </Box>
     );
 }
 

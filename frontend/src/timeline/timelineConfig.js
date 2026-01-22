@@ -4,6 +4,8 @@ export const LEFT_COL_WIDTH = 180;
 export const RIGHT_COL_WIDTH = 180;
 export const DOSE_COL_WIDTH = 120;
 export const DAY_WIDTH = 8;
+export const BAR_HEIGHT = 24;
+export const ROW_SPACING = 32;
 
 export const GRID_TEMPLATE = `
   ${LEFT_COL_WIDTH}px
