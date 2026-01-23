@@ -61,7 +61,7 @@ function App() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/api/medtimeline/patients/patient-001/`)
+    axios.get(`${API_BASE_URL}/api/medtimeline/patients/patient_001/`)
       .then((res) => {
       setMedications(res.data);
       setLoading(false);
@@ -97,7 +97,7 @@ return (
       overflowX: "auto"
     }}
   >
-    <PatientHeader patientId="patient-001" />
+    <PatientHeader patientId="patient_001" />
 
     <Typography variant="h4" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
       Medication Timeline
