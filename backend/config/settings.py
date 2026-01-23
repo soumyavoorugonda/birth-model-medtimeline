@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = True
+CORS_ALLOWED_ORIGINS = ['https://birth-model-medtimeline.vercel.app', 'http://localhost:5173',]
 
 ROOT_URLCONF = 'config.urls'
 

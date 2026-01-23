@@ -4,10 +4,9 @@ import {Typography, Divider, CircularProgress, Box, ToggleButton, ToggleButtonGr
 import PatientHeader from "./components/PatientHeader";
 import MedicationRow from "./components/MedicationRow";
 import TimelineHeader from './components/TimelineHeader';
-import {LEFT_COL_WIDTH, TIMELINE_RANGES, DAY_WIDTH_BY_RANGE, gridTemplateColumns} from "./timeline/timelineConfig";
+import {LEFT_COL_WIDTH, TIMELINE_RANGES, RIGHT_COL_WIDTH, DAY_WIDTH_BY_RANGE} from "./timeline/timelineConfig";
 import {startOfMonth, startOfDay, subMonths, differenceInCalendarDays, dayOffset} from "./timeline/dateUtils";
 import {addMonths, isBefore, format} from "date-fns";
-
 
 function App() {
   const [medications, setMedications] = useState([]);
@@ -52,10 +51,18 @@ function App() {
     }
     return out;
   }, [timelineStart, timelineEnd, dayWidth]);
+
+  const gridTemplateColumns = `
+    ${LEFT_COL_WIDTH}px
+    ${timelineWidth}px
+    ${RIGHT_COL_WIDTH}px
+  `;
+
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
   useEffect(() => {
-    axios.get("http://localhost:8000/api/medtimeline/patients/patient-001/")
-    .then((res) => {
+    axios.get(`${API_BASE_URL}/api/medtimeline/patients/patient-001/`)
+      .then((res) => {
       setMedications(res.data);
       setLoading(false);
   }).catch((err) => {
