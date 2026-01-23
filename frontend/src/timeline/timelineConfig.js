@@ -15,15 +15,18 @@ export const GRID_TEMPLATE = `
 `;
 
 export const TIMELINE_RANGES = {
+    "1M": 1,
+    "3M": 3,
     "6M": 6,
     "1Y": 12,
     "3Y": 36,
-    "5Y": 60,
+    "MAX": 120
 };
 
 export const DAY_WIDTH_BY_RANGE = {
+  "1M": 12,
+  "3M": 8,
   "6M": 6,
   "1Y": 3,
   "3Y": 2,
-  "5Y": 1,
 };

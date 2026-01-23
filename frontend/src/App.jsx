@@ -1,25 +1,26 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import {useState, useEffect, useMemo, useRef} from 'react';
 import axios from 'axios';
-import {Container, Typography, Card, CardContent, Stack, CircularProgress, Box} from "@mui/material";
+import {Typography, Divider, CircularProgress, Box, ToggleButton, ToggleButtonGroup} from "@mui/material";
 import PatientHeader from "./components/PatientHeader";
 import MedicationRow from "./components/MedicationRow";
 import TimelineHeader from './components/TimelineHeader';
-import { LEFT_COL_WIDTH, RIGHT_COL_WIDTH, DOSE_COL_WIDTH, DAY_WIDTH, TIMELINE_RANGES, DAY_WIDTH_BY_RANGE} from "./timeline/timelineConfig";
-import { startOfMonth, startOfDay, subMonths, differenceInCalendarDays, dayOffset} from "./timeline/dateUtils";
-import { addMonths, isBefore, format } from "date-fns";
-
+import {LEFT_COL_WIDTH, RIGHT_COL_WIDTH, DOSE_COL_WIDTH, TIMELINE_RANGES, DAY_WIDTH_BY_RANGE} from "./timeline/timelineConfig";
+import {startOfMonth, startOfDay, subMonths, differenceInCalendarDays, dayOffset} from "./timeline/dateUtils";
+import {addMonths, isBefore, format} from "date-fns";
 
 
 function App() {
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [range, setRange] = useState("6M");
   const monthsVisible = TIMELINE_RANGES[range];
   const timelineEnd = useMemo(() => startOfDay(new Date()), []);
   const timelineStart = useMemo(() => {
     return startOfMonth(subMonths(timelineEnd, monthsVisible-1));
   }, [timelineEnd, monthsVisible]);
+
   const dayWidth = DAY_WIDTH_BY_RANGE[range];
   const totalDays = differenceInCalendarDays(timelineEnd, timelineStart) + 1;
   const timelineWidth = totalDays * dayWidth;
@@ -29,6 +30,7 @@ function App() {
     ${RIGHT_COL_WIDTH}px
     ${DOSE_COL_WIDTH}px
   `;
+
   const timelineScrollRef = useRef(null);
   const todayDate = useMemo(() => startOfDay(new Date()), []);
   const todayX = useMemo(() => {
@@ -39,7 +41,6 @@ function App() {
     if (!timelineScrollRef.current) return;
 
     const el = timelineScrollRef.current;
-
     // Scroll to show the most recent months
     el.scrollLeft = el.scrollWidth - el.clientWidth;
   }, [monthsVisible]);
@@ -57,7 +58,6 @@ function App() {
     }
     return out;
   }, [timelineStart, timelineEnd, dayWidth]);
-
   
   useEffect(() => {
     axios.get("http://localhost:8000/api/medtimeline/patients/patient-001/")
@@ -101,6 +101,28 @@ return (
     <Typography variant="h4" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
       Medication Timeline
     </Typography>
+    <Divider sx={{ mb: 2, mt: 1 }} />
+
+    <Box
+      sx={{
+        display: "flex",
+        pl: `${LEFT_COL_WIDTH}px`,
+        mb: 1,
+      }}
+    >
+      <ToggleButtonGroup
+        size="small"
+        value={range}
+        exclusive
+        onChange={(_, value) => value && setRange(value)}
+      >
+        <ToggleButton value="1M">1M</ToggleButton>
+        <ToggleButton value="3M">3M</ToggleButton>
+        <ToggleButton value="6M">6M</ToggleButton>
+        <ToggleButton value="1Y">1Y</ToggleButton>
+        <ToggleButton value="3Y">3Y</ToggleButton>
+      </ToggleButtonGroup>
+    </Box>
 
     {/* TIMELINE HEADER*/}
     <Box
@@ -119,7 +141,7 @@ return (
 
     {/* Container for grid lines + medication rows */}
     <Box sx={{ position: "relative" }}>
-      {/* Vertical month grid lines - absolutely positioned overlay */}
+      {/* Vertical month grid lines*/}
       <Box
         sx={{
           position: "absolute",

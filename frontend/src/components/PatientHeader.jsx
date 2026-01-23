@@ -9,6 +9,7 @@ function PatientHeader({ patientId, name = "Olivia Doe", age = 29 }) {
         mb: 3,
         border: "1px solid #e0e0e0",
         borderRadius: 2,
+        bgcolor: "#609990"
       }}
     >
     <Box

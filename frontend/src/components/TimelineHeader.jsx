@@ -2,8 +2,9 @@ import { Box, Typography } from "@mui/material";
 import {format} from "date-fns";
 
 function TimelineHeader({ monthMarkers, todayX }) {
+    const todayLabel = format(new Date(), "MMM d, yyyy");
   return (
-    <Box sx={{ position: "relative", height: 36, width: "100%", overflow: "hidden" }}>
+    <Box sx={{ position: "relative", height: 36, width: "100%", overflow: "visible", }}>
       {/* Month boundary lines + labels */}
       {monthMarkers.map((m) => (
         <Box key={m.label} sx={{ 
@@ -20,12 +21,12 @@ function TimelineHeader({ monthMarkers, todayX }) {
                 bgcolor: "#eee", 
                 zIndex: 0 }} />
             <Typography
-                variant="caption"
+                variant="body2"
                 color="text.secondary"
                 sx={{ 
                     position: "absolute", 
                     top: 0, 
-                    left: 6, 
+                    left: 10,
                     whiteSpace: "nowrap" }}
             >
                 {m.label}
@@ -50,17 +51,20 @@ function TimelineHeader({ monthMarkers, todayX }) {
             bgcolor: "#cfcfcf", 
             zIndex: 1 }} />
           <Typography
-            variant="caption"
+            variant="body2"
             color="text.secondary"
             sx={{ 
-                position: "absolute", 
-                top: 0, 
-                left: 6, 
+                px: 1,
+                py: 0.25,
+                borderRadius: 1,
+                border: "1px solid #cfd8dc",
+                backgroundColor: "#fafafa",
+                fontWeight: 500,
                 whiteSpace: "nowrap",
-                fontWeight: 600,
-                color: "#424242"}}
+                color: "#40887d",
+                }}
           >
-            {format(new Date(), "MMM dd")}
+            Today: {format(new Date(), "MMM dd, yyyy")}
           </Typography>
         </Box>
       )}

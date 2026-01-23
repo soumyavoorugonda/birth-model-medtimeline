@@ -1,4 +1,4 @@
-import { Box, Tooltip } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 import { dayOffset } from "../timeline/dateUtils";
 
 function clampDate(d, min, max) {
@@ -8,7 +8,8 @@ function clampDate(d, min, max) {
 function TimelineBar({ timeline, timelineStart, timelineEnd, dayWidth, todayDate }) {
   const MIN_BAR_PX = 6;
   const BASE_COLOR = "#4fb6d6";
-
+  const displayDose = timeline.dose;
+  
   // Group records by source
   const recordsBySource = {};
   timeline.records.forEach(record => {
@@ -107,6 +108,7 @@ function TimelineBar({ timeline, timelineStart, timelineEnd, dayWidth, todayDate
                       }
                     }}
                   />
+
                 </Tooltip>
               );
             })}
