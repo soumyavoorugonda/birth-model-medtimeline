@@ -1,21 +1,14 @@
 from datetime import date
-from .models import Patient, Medication, MedicationRecord
+from .models import Medication
 
 def seed_data():
-    patient, _ = Patient.objects.get_or_create(
-        patient_id="patient_001",
-        defaults={
-            "name": "Olivia Doe",
-            "age": 29,
-        },
-    )
-
-    if MedicationRecord.objects.filter(patient=patient).exists():
+    if Medication.objects.filter(patient_id="patient_001").exists():
         return
 
     records = [
         # Prenatal Vitamin
         dict(
+            patient_id="patient_001",
             medication="Prenatal Vitamin",
             dose="1 tablet",
             frequency="once daily",
@@ -29,6 +22,7 @@ def seed_data():
 
         # Ferrous Sulfate
         dict(
+            patient_id="patient_001",
             medication="Ferrous Sulfate",
             dose="325 mg",
             frequency="once daily",
@@ -42,6 +36,7 @@ def seed_data():
 
         # Labetalol – Hospital A (100 mg)
         dict(
+            patient_id="patient_001",
             medication="Labetalol",
             dose="100 mg",
             frequency="twice daily",
@@ -55,6 +50,7 @@ def seed_data():
 
         # Labetalol – Hospital B (100 mg)
         dict(
+            patient_id="patient_001",
             medication="Labetalol",
             dose="100 mg",
             frequency="twice daily",
@@ -68,6 +64,7 @@ def seed_data():
 
         # Labetalol – Hospital A (200 mg)
         dict(
+            patient_id="patient_001",
             medication="Labetalol",
             dose="200 mg",
             frequency="twice daily",
@@ -81,6 +78,7 @@ def seed_data():
 
         # Aspirin
         dict(
+            patient_id="patient_001",
             medication="Aspirin",
             dose="81 mg",
             frequency="once daily",
@@ -94,6 +92,7 @@ def seed_data():
 
         # Magnesium Sulfate – Hospital A
         dict(
+            patient_id="patient_001",
             medication="Magnesium Sulfate",
             dose="2 g/hr",
             frequency="continuous infusion",
@@ -107,6 +106,7 @@ def seed_data():
 
         # Magnesium Sulfate – Hospital B
         dict(
+            patient_id="patient_001",
             medication="Magnesium Sulfate",
             dose="1 g/hr",
             frequency="continuous infusion",
@@ -120,6 +120,7 @@ def seed_data():
 
         # Oxytocin
         dict(
+            patient_id="patient_001",
             medication="Oxytocin",
             dose="4 mU/min",
             frequency="continuous infusion",
@@ -133,6 +134,7 @@ def seed_data():
 
         # Acetaminophen
         dict(
+            patient_id="patient_001",
             medication="Acetaminophen",
             dose="650 mg",
             frequency="every 6 hours",
@@ -145,10 +147,10 @@ def seed_data():
         ),
     ]
 
-    MedicationRecord.objects.bulk_create(
+    Medication.objects.bulk_create(
         [
-            MedicationRecord(
-                patient=patient,
+            Medication(
+                patient_id="patient_001",
                 **record,
             )
             for record in records
