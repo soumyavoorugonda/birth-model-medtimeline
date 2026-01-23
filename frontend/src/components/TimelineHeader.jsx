@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material";
+import {format} from "date-fns";
 
 function TimelineHeader({ monthMarkers, todayX }) {
   return (
@@ -10,21 +11,25 @@ function TimelineHeader({ monthMarkers, todayX }) {
             left: m.x, 
             top: 0, 
             bottom: 0 }}>
-          <Box sx={{ 
-            position: "absolute", 
-            left: 0, 
-            top: 0, 
-            bottom: 0, 
-            width: 1, 
-            bgcolor: "#eee", 
-            zIndex: 1 }} />
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            sx={{ position: "absolute", top: 0, left: 6, whiteSpace: "nowrap" }}
-          >
-            {m.label}
-          </Typography>
+            <Box sx={{ 
+                position: "absolute", 
+                left: 0, 
+                top: 0, 
+                bottom: 0, 
+                width: 1, 
+                bgcolor: "#eee", 
+                zIndex: 0 }} />
+            <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ 
+                    position: "absolute", 
+                    top: 0, 
+                    left: 6, 
+                    whiteSpace: "nowrap" }}
+            >
+                {m.label}
+            </Typography>
         </Box>
       ))}
 
@@ -34,7 +39,8 @@ function TimelineHeader({ monthMarkers, todayX }) {
             position: "absolute", 
             left: todayX, 
             top: 0, 
-            bottom: 0 }}>
+            bottom: 0,
+            zIndex: 1 }}>
           <Box sx={{ 
             position: "absolute", 
             left: 0, 
@@ -42,17 +48,19 @@ function TimelineHeader({ monthMarkers, todayX }) {
             bottom: 0, 
             width: 2, 
             bgcolor: "#cfcfcf", 
-            zIndex: 2 }} />
+            zIndex: 1 }} />
           <Typography
             variant="caption"
             color="text.secondary"
             sx={{ 
                 position: "absolute", 
-                top: 18, 
+                top: 0, 
                 left: 6, 
-                whiteSpace: "nowrap" }}
+                whiteSpace: "nowrap",
+                fontWeight: 600,
+                color: "#424242"}}
           >
-            Today
+            {format(new Date(), "MMM dd")}
           </Typography>
         </Box>
       )}

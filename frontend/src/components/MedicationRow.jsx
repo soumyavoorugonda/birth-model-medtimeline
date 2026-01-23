@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { Box, Typography, Chip, Drawer, Divider} from "@mui/material";
 import TimelineBar from "./TimelineBar.jsx";
+import { format } from "date-fns";
+
 
 function fmtDate(d) {
   if (!d) return "ongoing";
@@ -61,7 +63,7 @@ function MedicationRow({timeline, timelineStart, timelineEnd, monthMarkers, toda
             position: "relative", 
             height: "auto", 
             minHeight: 30,
-            overflow: "visible" 
+            overflowX: "visible" 
         }}>
             {/* Month grid lines extending down */}
             {(markers ?? []).map((m) => (
@@ -93,19 +95,30 @@ function MedicationRow({timeline, timelineStart, timelineEnd, monthMarkers, toda
 
             {/* Today line */}
             {Number.isFinite(todayX) && todayX >= 0 && (
-                <Box
-                    sx={{
-                        position: "absolute",
-                        left: todayX,
-                        top: 0,
-                        bottom: 0,
-                        width: 2,
-                        bgcolor: "#9e9e9e",
-                        zIndex: 5,
-                        pointerEvents: "none",
-                    }}
-                />
-            )}
+            <>
+
+            <Box sx={{ 
+                position: "absolute", 
+                left: todayX, 
+                top: 0, 
+                bottom: 0 }}>
+                <Box sx={{ 
+                    position: "absolute", 
+                    left: 0, top: 0, 
+                    bottom: 0, 
+                    width: 2, 
+                    bgcolor: "#9e9e9e", 
+                    zIndex: 2 
+                    }} />
+                <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ position: "absolute", top: 18, left: 6, whiteSpace: "nowrap" }}
+                >
+                </Typography>
+            </Box>
+  </>
+)}
         </Box>
 
         {/* RIGHT */}
@@ -115,10 +128,6 @@ function MedicationRow({timeline, timelineStart, timelineEnd, monthMarkers, toda
             </Typography>
         </Box>
 
-        {/* DOSE */}
-        <Typography variant="body2" color="text.secondary">
-            {timeline.displayDose}
-        </Typography>
 
         {/* Drawer (details panel) */}
         <Drawer

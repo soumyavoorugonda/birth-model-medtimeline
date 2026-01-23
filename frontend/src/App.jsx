@@ -18,7 +18,7 @@ function App() {
   const monthsVisible = TIMELINE_RANGES[range];
   const timelineEnd = useMemo(() => startOfDay(new Date()), []);
   const timelineStart = useMemo(() => {
-    return subMonths(timelineEnd, monthsVisible - 1);
+    return startOfMonth(subMonths(timelineEnd, monthsVisible-1));
   }, [timelineEnd, monthsVisible]);
   const dayWidth = DAY_WIDTH_BY_RANGE[range];
   const totalDays = differenceInCalendarDays(timelineEnd, timelineStart) + 1;
@@ -31,11 +31,10 @@ function App() {
   `;
   const timelineScrollRef = useRef(null);
   const todayDate = useMemo(() => startOfDay(new Date()), []);
-  const todayX = useMemo(() => dayOffset(timelineStart, timelineEnd) * dayWidth, [
-    timelineStart,
-    timelineEnd,
-    dayWidth,
-  ]);
+  const todayX = useMemo(() => {
+    const xPos = dayOffset(timelineStart, todayDate) * dayWidth;
+    return xPos;
+  }, [timelineStart, todayDate, dayWidth]);
   useEffect(() => {
     if (!timelineScrollRef.current) return;
 
@@ -50,16 +49,12 @@ function App() {
     let d = startOfMonth(timelineStart);
 
     while (isBefore(d, timelineEnd) || d.getTime() === timelineEnd.getTime()) {
-      const x = dayOffset(timelineStart, d) * dayWidth;
-      if (x > 10) { 
       out.push({
         label: format(d, "MMM yyyy"),
-        x: x,
+        x: dayOffset(timelineStart, d) * dayWidth,
       });
-    }
       d = addMonths(d, 1);
     }
-
     return out;
   }, [timelineStart, timelineEnd, dayWidth]);
 
@@ -98,16 +93,16 @@ return (
       borderRadius: 2,
       p: 2,
       width: "100%",
-      overflowX: "auto",
+      overflowX: "auto"
     }}
   >
     <PatientHeader patientId="patient-001" />
 
-    <Typography variant="h4" gutterBottom>
+    <Typography variant="h4" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
       Medication Timeline
     </Typography>
 
-    {/* TIMELINE HEADER — aligned with rows */}
+    {/* TIMELINE HEADER*/}
     <Box
       sx={{
         display: "grid",

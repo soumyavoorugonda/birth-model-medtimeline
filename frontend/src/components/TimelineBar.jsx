@@ -7,6 +7,7 @@ function clampDate(d, min, max) {
 
 function TimelineBar({ timeline, timelineStart, timelineEnd, dayWidth, todayDate }) {
   const MIN_BAR_PX = 6;
+  const BASE_COLOR = "#4fb6d6";
 
   // Group records by source
   const recordsBySource = {};
@@ -32,41 +33,58 @@ function TimelineBar({ timeline, timelineStart, timelineEnd, dayWidth, todayDate
     return match ? parseFloat(match[1]) : 0;
   };
 
-  // Get all dose values for color scaling
-  const allDoses = timeline.records.map(r => getDoseValue(r.dose));
-  const minDose = Math.min(...allDoses);
-  const maxDose = Math.max(...allDoses);
-
   return (
     <Box sx={{ position: "relative", height: sources.length * 20, minHeight: 20 }}>
       {sources.map((source, sourceIdx) => {
         const records = recordsBySource[source];
+        const baselineDose = getDoseValue(records[0].dose);
         
         return (
-          <Box key={source} sx={{ position: "relative" }}>
+          <Box 
+            key={source} 
+            sx={{ position: "relative" }}>
             {records.map((record, idx) => {
-              const start = new Date(record.start_date);
-              const end = record.end_date ? new Date(record.end_date) : todayDate;
+                const parseLocalDate = (dateStr) => {
+                    if (!dateStr) return null;
+                    const [year, month, day] = dateStr.split('-');
+                    return new Date(year, month - 1, day); // Months are 0-indexed
+                    };
+              const start = parseLocalDate(record.start_date);
+              const end = record.end_date ? parseLocalDate(record.end_date) : todayDate;
 
               if (end < timelineStart || start > timelineEnd) return null;
-
+              const effectiveEnd = end > todayDate ? todayDate : end;
+        
               const startClamped = clampDate(start, timelineStart, timelineEnd);
-              const endClamped = clampDate(end, timelineStart, todayDate);
+              const endClamped = clampDate(effectiveEnd, timelineStart, timelineEnd);
 
               const leftPx = dayOffset(timelineStart, startClamped) * dayWidth;
-              const widthPx = Math.max((dayOffset(startClamped, endClamped) + 1) * dayWidth, MIN_BAR_PX);
+              const isOngoing = !record.end_date;
+              const widthPx = isOngoing 
+                ? Math.max(dayOffset(startClamped, endClamped) * dayWidth, MIN_BAR_PX)
+                : Math.max((dayOffset(startClamped, endClamped) + 1) * dayWidth, MIN_BAR_PX);
 
-              // Calculate opacity based on dose
-              const doseValue = getDoseValue(record.dose);
-              const intensity = maxDose > minDose 
-                ? (doseValue - minDose) / (maxDose - minDose) 
-                : 0.5;
-              const opacity = 0.4 + (intensity * 0.5);
+              // Calculate opacity based on dose change from baseline
+              const currentDose = getDoseValue(record.dose);
+              let opacity;
+              
+              if (currentDose === baselineDose) {
+                // No change - base opacity
+                opacity = 0.7;
+              } else if (currentDose > baselineDose) {
+                // Dose increase - darker
+                const increase = (currentDose - baselineDose) / baselineDose;
+                opacity = Math.min(0.7 + (increase * 0.3), 1.0);
+              } else {
+                // Dose decrease - lighter
+                const decrease = (baselineDose - currentDose) / baselineDose;
+                opacity = Math.max(0.7 - (decrease * 0.3), 0.4);
+              }
 
               return (
                 <Tooltip
                   key={record.id}
-                  title={`${record.dose}, ${source}, ${record.start_date} → ${record.end_date || 'ongoing'}`}
+                  title={`${record.frequency}, ${record.dose}, ${record.source}, ${record.start_date} → ${record.end_date || 'ongoing'}`}
                 >
                   <Box
                     sx={{
@@ -74,15 +92,16 @@ function TimelineBar({ timeline, timelineStart, timelineEnd, dayWidth, todayDate
                       top: sourceIdx * 18, // All segments for same source at same height
                       left: leftPx,
                       width: widthPx,
-                      height: 16,
-                      borderRadius: 1,
-                      backgroundColor: "#4fb6d6",
+                      height: 17,
+                      borderRadius: 0,
+                      backgroundColor: BASE_COLOR,
                       opacity: opacity,
                       border: "none",
                       boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
                       zIndex: 100,
                       '&:hover': { 
-                        opacity: 1, 
+                        opacity: 1.0,
+                        border: "1px solid #000", 
                         zIndex: 200,
                         boxShadow: 2
                       }
