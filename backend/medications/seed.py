@@ -9,7 +9,7 @@ def seed_data():
         # Prenatal Vitamin
         dict(
             patient_id="patient_001",
-            medication="Prenatal Vitamin",
+            medication_name="Prenatal Vitamin",
             dose="1 tablet",
             frequency="once daily",
             route="oral",
@@ -23,7 +23,7 @@ def seed_data():
         # Ferrous Sulfate
         dict(
             patient_id="patient_001",
-            medication="Ferrous Sulfate",
+            medication_name="Ferrous Sulfate",
             dose="325 mg",
             frequency="once daily",
             route="oral",
@@ -37,7 +37,7 @@ def seed_data():
         # Labetalol – Hospital A (100 mg)
         dict(
             patient_id="patient_001",
-            medication="Labetalol",
+            medication_name="Labetalol",
             dose="100 mg",
             frequency="twice daily",
             route="oral",
@@ -51,7 +51,7 @@ def seed_data():
         # Labetalol – Hospital B (100 mg)
         dict(
             patient_id="patient_001",
-            medication="Labetalol",
+            medication_name="Labetalol",
             dose="100 mg",
             frequency="twice daily",
             route="oral",
@@ -65,7 +65,7 @@ def seed_data():
         # Labetalol – Hospital A (200 mg)
         dict(
             patient_id="patient_001",
-            medication="Labetalol",
+            medication_name="Labetalol",
             dose="200 mg",
             frequency="twice daily",
             route="oral",
@@ -79,7 +79,7 @@ def seed_data():
         # Aspirin
         dict(
             patient_id="patient_001",
-            medication="Aspirin",
+            medication_name="Aspirin",
             dose="81 mg",
             frequency="once daily",
             route="oral",
@@ -93,7 +93,7 @@ def seed_data():
         # Magnesium Sulfate – Hospital A
         dict(
             patient_id="patient_001",
-            medication="Magnesium Sulfate",
+            medication_name="Magnesium Sulfate",
             dose="2 g/hr",
             frequency="continuous infusion",
             route="IV",
@@ -107,7 +107,7 @@ def seed_data():
         # Magnesium Sulfate – Hospital B
         dict(
             patient_id="patient_001",
-            medication="Magnesium Sulfate",
+            medication_name="Magnesium Sulfate",
             dose="1 g/hr",
             frequency="continuous infusion",
             route="IV",
@@ -121,7 +121,7 @@ def seed_data():
         # Oxytocin
         dict(
             patient_id="patient_001",
-            medication="Oxytocin",
+            medication_name="Oxytocin",
             dose="4 mU/min",
             frequency="continuous infusion",
             route="IV",
@@ -135,7 +135,7 @@ def seed_data():
         # Acetaminophen
         dict(
             patient_id="patient_001",
-            medication="Acetaminophen",
+            medication_name="Acetaminophen",
             dose="650 mg",
             frequency="every 6 hours",
             route="oral",
@@ -150,7 +150,6 @@ def seed_data():
     Medication.objects.bulk_create(
         [
             Medication(
-                patient_id="patient_001",
                 **record,
             )
             for record in records
