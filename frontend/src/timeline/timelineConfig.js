@@ -11,7 +11,6 @@ export const GRID_TEMPLATE = `
   ${LEFT_COL_WIDTH}px
   1fr
   ${RIGHT_COL_WIDTH}px
-  ${DOSE_COL_WIDTH}px
 `;
 
 export const TIMELINE_RANGES = {

@@ -16,14 +16,6 @@ export {
   differenceInCalendarDays,
 };
 
-export function maxDate(a, b) {
-  return a > b ? a : b;
-}
-
-export function minDate(a, b) {
-  return a < b ? a : b;
-}
-
 export function dayOffset(start, date) {
   return differenceInCalendarDays(date, start);
 }

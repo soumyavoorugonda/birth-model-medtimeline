@@ -4,7 +4,7 @@ import {Typography, Divider, CircularProgress, Box, ToggleButton, ToggleButtonGr
 import PatientHeader from "./components/PatientHeader";
 import MedicationRow from "./components/MedicationRow";
 import TimelineHeader from './components/TimelineHeader';
-import {LEFT_COL_WIDTH, RIGHT_COL_WIDTH, DOSE_COL_WIDTH, TIMELINE_RANGES, DAY_WIDTH_BY_RANGE} from "./timeline/timelineConfig";
+import {LEFT_COL_WIDTH, TIMELINE_RANGES, DAY_WIDTH_BY_RANGE, gridTemplateColumns} from "./timeline/timelineConfig";
 import {startOfMonth, startOfDay, subMonths, differenceInCalendarDays, dayOffset} from "./timeline/dateUtils";
 import {addMonths, isBefore, format} from "date-fns";
 
@@ -24,12 +24,6 @@ function App() {
   const dayWidth = DAY_WIDTH_BY_RANGE[range];
   const totalDays = differenceInCalendarDays(timelineEnd, timelineStart) + 1;
   const timelineWidth = totalDays * dayWidth;
-  const gridTemplateColumns = `
-    ${LEFT_COL_WIDTH}px
-    ${timelineWidth}px
-    ${RIGHT_COL_WIDTH}px
-    ${DOSE_COL_WIDTH}px
-  `;
 
   const timelineScrollRef = useRef(null);
   const todayDate = useMemo(() => startOfDay(new Date()), []);

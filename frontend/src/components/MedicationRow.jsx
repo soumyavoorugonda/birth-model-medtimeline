@@ -1,7 +1,6 @@
-import { useMemo, useState } from "react";
-import { Box, Typography, Chip, Drawer, Divider} from "@mui/material";
+import {useMemo, useState} from "react";
+import {Box, Typography, Chip, Drawer, Divider} from "@mui/material";
 import TimelineBar from "./TimelineBar.jsx";
-import { format } from "date-fns";
 
 
 function fmtDate(d) {
@@ -13,24 +12,35 @@ function fmtDate(d) {
 }
 
 function MedicationRow({timeline, timelineStart, timelineEnd, monthMarkers, todayX, todayDate, dayWidth = 3, gridTemplateColumns}) {
-    const markers = monthMarkers;
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const hasSourceConflict = useMemo(() => {
+
+    const hasRecordConflict = useMemo(() => {
         if (!timeline?.records || timeline.records.length <= 1) return false;
         const sources = new Set(timeline.records.map(r => r.source));
         return sources.size > 1;
     }, [timeline]);
     const conflictReason = useMemo(() => {
-        if (!hasSourceConflict) return null;
+        if (!hasRecordConflict) return null;
 
-        const sources = Array.from(new Set(timeline.records.map(r => r.source)));
-        const doses = new Set(timeline.records.map(r => r.dose));
+        const records = timeline.records || [];
+        if (records.length < 2) return null;
+
+        const uniq = (arr) => Array.from(new Set(arr.filter((v) => v != null && v !== "")));
+        const hasDiff = (arr) => uniq(arr).length > 1;
+
+        const sources = uniq(records.map((r) => r.source));
+        const doses = uniq(records.map((r) => r.dose));
+
+        const reasons = [];
+        if (hasDiff(doses)) reasons.push("different doses");
+        if (sources.length > 1) reasons.push(`multiple sources (${sources.join(", ")})`);
+
+        // fallback if it's neither dose-diff nor multi-source
+        if (reasons.length === 0) return `Multiple records for this medication (${records.length}).`;
+
+        return `Record conflict: ${reasons.join("; ")}.`;
+        }, [timeline.records, hasRecordConflict]);
         
-        if (doses.size > 1) {
-            return `Multiple sources (${sources.join(", ")}) with different doses.`;
-        }
-        return `Same medication documented by multiple sources: ${sources.join(", ")}`;
-    }, [timeline, hasSourceConflict]);
     return (
         <Box
         sx={{
@@ -44,9 +54,9 @@ function MedicationRow({timeline, timelineStart, timelineEnd, monthMarkers, toda
         {/* LEFT */}
         <Typography fontWeight={600}>
             {timeline.medication_name}
-            {hasSourceConflict && ( // Changed from timeline.records.length > 1
+            {hasRecordConflict && ( 
                 <Chip
-                    label="source conflict"
+                    label="record conflict"
                     size="small"
                     color="warning"
                     clickable
@@ -65,22 +75,6 @@ function MedicationRow({timeline, timelineStart, timelineEnd, monthMarkers, toda
             minHeight: 30,
             overflowX: "visible" 
         }}>
-            {/* Month grid lines extending down */}
-            {(markers ?? []).map((m) => (
-                <Box
-                    key={`grid-${m.label}`}
-                    sx={{
-                        position: "absolute",
-                        left: m.x,
-                        top: 0,
-                        bottom: 0,
-                        width: 2,
-                        bgcolor: "#e0e0e0", // Light gray in rows
-                        zIndex: 0,
-                        pointerEvents: "none",
-                    }}
-                />
-            ))}
 
             {/* Bars */}
             <Box sx={{ position: "relative", zIndex: 10 }}>

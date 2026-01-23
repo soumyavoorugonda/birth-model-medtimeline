@@ -2,7 +2,6 @@ import { Box, Typography } from "@mui/material";
 import {format} from "date-fns";
 
 function TimelineHeader({ monthMarkers, todayX }) {
-    const todayLabel = format(new Date(), "MMM d, yyyy");
   return (
     <Box sx={{ position: "relative", height: 36, width: "100%", overflow: "visible", }}>
       {/* Month boundary lines + labels */}

@@ -1,14 +1,13 @@
-import { Box, Tooltip, Typography } from "@mui/material";
-import { dayOffset } from "../timeline/dateUtils";
+import {Box, Tooltip} from "@mui/material";
+import {dayOffset} from "../timeline/dateUtils";
 
 function clampDate(d, min, max) {
   return d < min ? min : d > max ? max : d;
 }
 
-function TimelineBar({ timeline, timelineStart, timelineEnd, dayWidth, todayDate }) {
+function TimelineBar({timeline, timelineStart, timelineEnd, dayWidth, todayDate}) {
   const MIN_BAR_PX = 6;
   const BASE_COLOR = "#4fb6d6";
-  const displayDose = timeline.dose;
   
   // Group records by source
   const recordsBySource = {};
@@ -44,11 +43,11 @@ function TimelineBar({ timeline, timelineStart, timelineEnd, dayWidth, todayDate
           <Box 
             key={source} 
             sx={{ position: "relative" }}>
-            {records.map((record, idx) => {
+            {records.map((record) => {
                 const parseLocalDate = (dateStr) => {
                     if (!dateStr) return null;
                     const [year, month, day] = dateStr.split('-');
-                    return new Date(year, month - 1, day); // Months are 0-indexed
+                    return new Date(year, month - 1, day);
                     };
               const start = parseLocalDate(record.start_date);
               const end = record.end_date ? parseLocalDate(record.end_date) : todayDate;
