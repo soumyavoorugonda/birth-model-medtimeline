@@ -20,7 +20,7 @@ Test data is pre-seeded for `patient_001`.
 - **Core model**: `Medication`
 - **API endpoint**: 
    - `GET /api/medtimeline/patients/<patient_id>/`
-   - Returns all medications for a given patient, sorted by start date.
+   - Returns all medications for a given patient, sorted by start date
 - **Data seeding**:
     - Seeded realistic medication records for a single patient
     - Includes overlapping medications, duplicate drugs from different sources, dose changes, and missing end dates
@@ -78,6 +78,7 @@ Conflicts arise when:
 - Medications with multiple records are visually grouped.
 - A **“record conflict” indicator** is shown when more than one record exists for the same medication.
 - Overlapping bars make differences in duration and dosing visible.
+- Dose changes are visually distinguished using lighter and darker color variations.
 - Partially handled incomplete date information, when an `end_date` is null, considered it as ongoing.
 
 ### Same medication from two different facilities
