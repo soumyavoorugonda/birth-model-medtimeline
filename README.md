@@ -126,6 +126,18 @@ This approach favors explainability over hidden logic, which is important in cli
 - **Realistic data modeling**: Reflects how clinical data actually looks when aggregated from multiple systems.
 - Including a `last_updated_at` field allows the system to capture data freshness, which is critical in clinical contexts where multiple systems may update the same medication record at different times.
 
+### UI Tradeoffs
+
+**What I chose to show prominently:**
+- Date ranges as horizontal bars (makes timeline intuitive)
+- Conflict indicators
+- Medication grouping
+
+**What I chose to minimize:**
+- Detailed record metadata (dose, frequency, route) shown only in drawer on click or on hover
+- Source system information (shown on hover to reduce clutter)
+
+These decisions prioritize clarity and scanability over comprehensive detail at first glance.
 
 ## What I Would Improve With More Time
 
